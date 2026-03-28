@@ -122,11 +122,7 @@ OPENAI_API_KEY=your_api_key_here
 
 ---
 
-## 📸 Screenshots
 
-*Add screenshots here (UI, generated CV, etc.)*
-
----
 
 ## 💡 Author
 
