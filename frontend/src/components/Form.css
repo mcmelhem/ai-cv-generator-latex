@@ -1,32 +1,46 @@
-.header{
+.header {
     display: flex;
     justify-content: center;
     align-items: center;
     color: grey;
 }
-.option-item{
+
+.option-item {
     cursor: pointer;
     border: 1px solid #80808087;
     display: flex;
     color: grey;
+    background: white;
     flex-direction: column;
     padding: 5px;
 }
-.option-item > span{
+
+.option-item>span {
     font-size: 13px;
 }
-.option-item > button{
-   color: grey;
+
+.option-item>button {
+    color: grey;
 }
-.fill-info{
+
+.fill-info {
     border-top-left-radius: 5px;
     border-top-right-radius: 5px;
 }
-.import-cv{
+
+.import-cv {
     border-bottom-left-radius: 5px;
     border-bottom-right-radius: 5px;
 }
-.generate{
+
+.generate {
     margin: 0 auto;
     display: flex;
+}
+
+.generate-section {
+    border: 1px solid rgba(37, 38, 62, 0.155);
+    border-radius: 10px;
+    padding: 25px;
+    background-color: white;
 }

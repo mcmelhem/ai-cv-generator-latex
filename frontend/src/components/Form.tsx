@@ -13,6 +13,7 @@ function Form() {
       phone: '',
       linkedin: '',
       github: '',
+      address: '',
       skills: '',
       experience: '',
       education: '',
@@ -52,10 +53,8 @@ function Form() {
   }
   return (
     <>
-
-      <div className='form container-fluid'>
-        <div className='header'>
-        </div>
+     
+      <div className='generate-section container'>
         <div className='cv-building row mb-2'>
           <div className='cv-options col-1 ps-1 pe-0'>
             <div className='option-item fill-info' onClick={() => openPanel()}>
@@ -68,7 +67,7 @@ function Form() {
               <button title='Import cv' className='btn btn-sm'>
                 <FontAwesomeIcon icon={faUser} />
               </button>
-              <span className='text-center'>Import Existing CV</span>
+              <span className='text-center'>Import Existing</span>
             </div>
           </div>
           <div className='col-11'>
@@ -119,6 +118,14 @@ function Form() {
                     value={formData.github}
                     onChange={(e) => setFormData({ ...formData, github: e.target.value })} />
                 </div>
+                <div className='col-6'>
+                  <input
+                    type="text"
+                    className="form-control"
+                    placeholder="Address"
+                    value={formData.address}
+                    onChange={(e) => setFormData({ ...formData, github: e.target.value })} />
+                </div>
 
               </div>
               <div className='row mb-1'>
@@ -167,14 +174,14 @@ function Form() {
           </div>
         </div>
         <div className='generate'>
-          <button className="btn btn-secondary mx-auto" onClick={() => handleGenerate()}>Generate Latex</button>
+          <button className="btn btn-secondary mx-auto" onClick={() => handleGenerate()}>Generate</button>
         </div>
       </div>
 
-      <div className="result" style={{ display: 'none' }}>
+      <div className="result d-none">
 
         <textarea
-        
+
           name="cv-result"
           className="cv-result form-control"
           id="cv-result"
