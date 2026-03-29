@@ -1,11 +1,16 @@
 import { useState } from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faUser, faAddressCard } from '@fortawesome/free-solid-svg-icons';
+import 'bootstrap/dist/css/bootstrap.min.css';
+import { ClipLoader } from "react-spinners";
 import './Form.css'
 
 function Form() {
   const [jobDescription, setJobDescription] = useState('')
   const [cvResult, setCvResult] = useState('')
+  const [error, setError] = useState('')
+  const [loading, setLoading] = useState(false);
+  const [isCopied, setIsCopied] = useState(false);
   const [formData, setFormData] = useState(
     {
       name: '',
@@ -21,25 +26,67 @@ function Form() {
       jobDescription: ''
     }
   )
-  async function handleGenerate() {
-
+  function validateForm() {
+    var strError = "";
+    if (!formData.name) {
+      strError = strError == "" ? strError : strError + " and Name is Required";
+    }
+    if (!formData.email) {
+      strError == "" ? strError : strError + " and Email is Required";
+    }
+    if (!formData.phone) {
+      strError == "" ? strError : strError + " and Phone is Required";
+    }
+    if (!formData.experience) {
+      strError == "" ? strError : strError + " and Experience is Required";
+    }
+    if (!formData.jobDescription) {
+      strError == "" ? strError : strError + " and Job Description is Required";
+    }
+    return strError;
+  }
+  const copyToClipboard = async () => {
     try {
+      await navigator.clipboard.writeText(cvResult);
+      setIsCopied(true);
+
+      setTimeout(() => setIsCopied(false), 2000);
+    } catch (err) {
+      console.error('Failed to copy text: ', err);
+
+    }
+  };
+
+
+  async function handleGenerate() {
+    const formError = validateForm();
+    if (formError != "") {
+      setError(formError);
+      return;
+    }
+    try {
+      setLoading(true);
       const response = await fetch("http://127.0.0.1:5000/generateCV", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),
       });
-
+      if (!response.ok) {
+        throw new Error("Server error");
+      }
       const data = await response.json();
-      console.log(data);
 
-      // store result
-      setCvResult(data.latex);
+      setCvResult(data.response);
+
 
     } catch (error) {
-      console.error("Error:", error);
+      setError(error)
+
+    } finally {
+      setLoading(false)
     }
   }
+
   function openPanel() {
     var panel = document.getElementById('info');
     if (panel) {
@@ -53,7 +100,7 @@ function Form() {
   }
   return (
     <>
-     
+
       <div className='generate-section container'>
         <div className='cv-building row mb-2'>
           <div className='cv-options col-1 ps-1 pe-0'>
@@ -124,7 +171,7 @@ function Form() {
                     className="form-control"
                     placeholder="Address"
                     value={formData.address}
-                    onChange={(e) => setFormData({ ...formData, github: e.target.value })} />
+                    onChange={(e) => setFormData({ ...formData, address: e.target.value })} />
                 </div>
 
               </div>
@@ -168,31 +215,42 @@ function Form() {
               placeholder='Job Description...'
               cols={30}
               rows={8}
-              value={jobDescription}
-              onChange={(e) => setJobDescription(e.target.value)}
+              value={formData.jobDescription}
+              onChange={(e) => setFormData({ ...formData, jobDescription: e.target.value })}
             ></textarea>
           </div>
         </div>
         <div className='generate'>
           <button className="btn btn-secondary mx-auto" onClick={() => handleGenerate()}>Generate</button>
         </div>
+
+        <div className='mt-1'>
+          {cvResult != '' ? (
+            <div className="result">
+              <textarea
+                name="cv-result"
+                className="cv-result form-control"
+                id="cv-result"
+                placeholder='Generated CV LaTeX will appear here...'
+                cols={30}
+                rows={20}
+                value={cvResult}
+                readOnly
+              ></textarea>
+              <button className="btn btn-secondary mt-1" onClick={copyToClipboard}>Copy</button>
+            </div>
+          )
+            :
+            ''
+          }
+        </div>
+        {loading && (
+          <div className="d-flex justify-content-center align-items-center mt-4">
+            <ClipLoader color="rgb(37 38 62 / 85%);" size={50} />
+          </div>
+        )}
       </div>
 
-      <div className="result d-none">
-
-        <textarea
-
-          name="cv-result"
-          className="cv-result form-control"
-          id="cv-result"
-          placeholder='Generated CV LaTeX will appear here...'
-          cols={30}
-          rows={20}
-          value={cvResult}
-          readOnly
-        ></textarea>
-        <button className="btn btn-secondary mt-1">Copy</button>
-      </div>
     </>
   )
 }
