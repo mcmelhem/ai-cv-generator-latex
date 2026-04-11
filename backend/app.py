@@ -1,5 +1,7 @@
 from flask import Flask, request, jsonify
 from flask_cors import CORS
+import subprocess
+from flask import send_file
 from dotenv import load_dotenv
 from openai import OpenAI
 import os   
@@ -48,8 +50,16 @@ def generate_cv():
         
         ai_reponse = response.choices[0].message.content.strip()
         ai_reponse = ai_reponse.replace("```latex", "").replace("\\n", "\n").replace("\\\\", "\\")
+        with open("cv.tex", "w", encoding="utf-8") as f:
+            f.write(ai_reponse)
 
-        return jsonify({"response": ai_reponse})
+     
+        subprocess.run(["pdflatex", "cv.tex"], check=True)
+
+      
+        return send_file("cv.pdf", as_attachment=True)
+
+       
 
     except Exception as e:
         return jsonify({"error": str(e)}), 500
