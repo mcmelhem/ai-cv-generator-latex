@@ -23,6 +23,7 @@ function Form({ showUpload }) {
     setFileName(file?.name || "");
     console.log(file);
   };
+  const [openSection, setOpenSection] = useState("jobdescription");
   const [formData, setFormData] = useState(
     {
       name: '',
@@ -39,7 +40,7 @@ function Form({ showUpload }) {
       jobDescription: ''
     }
   );
-  const [openSection, setOpenSection] = useState("jobdescription");
+
 
   const toggleSection = (section) => {
     setOpenSection(openSection === section ? null : section);
@@ -132,35 +133,34 @@ function Form({ showUpload }) {
       setLoading(false)
     }
   }
-  async function handleGenerateCV() {
-    const formError = validateForm();
-
-    if (formError != "") {
-      setError(formError);
+  async function handleGenerateFromCV() {
+    const file = fileInputRef.current?.files?.[0];
+   
+    if (!file) {
+      alert("Please upload a file");
       return;
     }
+   
+    //create form data to send file
+    const bodyData = new FormData();
+    bodyData.append("file", file);
+    bodyData.append("job_description", formData.jobDescription);
+
     try {
       setLoading(true);
-      const response = await fetch("http://127.0.0.1:5000/generateCV", {
+      setCvResult("");
+      const response = await fetch("http://127.0.0.1:5000/generateCVFromFile", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData),
+        body: bodyData,
       });
       if (!response.ok) {
         throw new Error("Server error");
       }
+     
       const data = await response.json();
 
       setCvResult(data.response);
-      const blob = await response.blob();
-
-      const url = window.URL.createObjectURL(blob);
-      const a = document.createElement("a");
-      a.href = url;
-      a.download = "cv.pdf";
-      a.click();
-
-
+     
     } catch (error) {
       setError(error)
 
@@ -349,13 +349,18 @@ function Form({ showUpload }) {
                 )}
 
                 {/* Extracted Info */}
-                <div className="mt-3 small">
-                  <p><strong>Name:</strong> </p>
-                  <p><strong>Experience:</strong> </p>
-                  <p><strong>Skills:</strong> </p>
-                </div>
+                <textarea
+                  name="job-description"
+                  className="job-description form-control"
+                  id="job-description"
+                  placeholder='Job Description...'
+                  cols={30}
+                  rows={2}
+                  value={formData.jobDescription}
+                  onChange={(e) => setFormData({ ...formData, jobDescription: e.target.value })}
+                ></textarea>
 
-                <button className="btn btn-primary btn-primary-custom align-self-center mt-2" onClick={handleGenerateWithCV}>
+                <button className="btn btn-primary btn-primary-custom align-self-center mt-2" onClick={handleGenerateFromCV}>
                   Enhance with AI
                 </button>
               </div>
@@ -365,9 +370,9 @@ function Form({ showUpload }) {
         {/* RIGHT SIDE */}
         <div className="col-lg-8">
           <div className="card shadow-sm">
-            <div className="card-body cv-preview">
+            <div className="card-body cv-preview flex-column">
               {/* Header */}
-              <div className="d-flex justify-content-between align-items-center mb-3">
+              <div className="d-flex justify-content-between mb-3">
                 <h5 className="mb-0">CV Preview</h5>
                 <div className='mt-1'>
                   {cvResult != '' ? (
@@ -382,7 +387,7 @@ function Form({ showUpload }) {
                         value={cvResult}
                         readOnly
                       ></textarea>
-                      <button className="btn btn-secondary mt-1" onClick={copyToClipboard}>Copy</button>
+                     
 
                     </div>
                   )
@@ -412,7 +417,7 @@ function Form({ showUpload }) {
                   <i className='bi bi-download me-1'></i>
                   Download PDF
                 </button>
-                <button className="btn btn-outline-secondary btn-sm">
+                <button className="btn btn-outline-secondary btn-sm" onClick={copyToClipboard}>
                   <i className='bi bi-clipboard me-1'></i>
                   Copy LaTeX
                 </button>
