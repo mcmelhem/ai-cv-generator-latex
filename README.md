@@ -37,7 +37,6 @@ It outputs **clean LaTeX code** ready for compilation into a polished PDF resume
 ### Backend
 
 * Flask (Python)
-* Flask-CORS
 
 ### AI
 
@@ -104,7 +103,7 @@ OPENAI_API_KEY=your_api_key_here
 
 ## ⚙️ How It Works
 
-1. User enters CV information + job description
+1. User enters CV information + job description Or Uploads an existing CV with job description
 2. Data is sent to Flask backend
 3. Backend calls OpenAI API
 4. AI generates tailored LaTeX CV
@@ -114,10 +113,8 @@ OPENAI_API_KEY=your_api_key_here
 
 ## 🔮 Future Improvements
 
-* 📄 Upload and parse existing CV (PDF/DOCX)
-* 📥 Export LaTeX to PDF
+* 📄 Add Nore Form Fields such as Projects, Courses...
 * 🎨 Multiple CV templates
-* 🔐 User authentication
 * 🌐 Deployment (live demo)
 
 ---
@@ -136,7 +133,7 @@ This project demonstrates:
 
 * Full-stack development (React + Flask)
 * API integration
-* AI-powered applications
+* AI-powered applications and Rag implementation
 * Real-world product thinking
 
 ---
