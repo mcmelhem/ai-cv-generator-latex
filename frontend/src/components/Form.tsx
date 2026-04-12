@@ -11,6 +11,7 @@ function Form({ showUpload }) {
   const [isCopied, setIsCopied] = useState(false);
   const fileInputRef = useRef(null);
   const [fileName, setFileName] = useState("");
+  const [pdfUrl, setPdfUrl] = useState("");
   const handleFileBrowse = () => {
     if (fileInputRef.current) {
       fileInputRef.current?.click();
@@ -95,7 +96,19 @@ function Form({ showUpload }) {
 
     }
   };
+  const regenerateCV = () => {
+    setPdfUrl("");
+  }
+  const compileLatex = async () => {
+    const res = await fetch("http://127.0.0.1:5000/getLatexPreview", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ latex: cvResult }),
+    });
 
+    const data = await res.json();
+    setPdfUrl(data.pdf_url);
+  };
 
   async function handleGenerate() {
     const formError = validateForm();
@@ -135,12 +148,12 @@ function Form({ showUpload }) {
   }
   async function handleGenerateFromCV() {
     const file = fileInputRef.current?.files?.[0];
-   
+
     if (!file) {
       alert("Please upload a file");
       return;
     }
-   
+
     //create form data to send file
     const bodyData = new FormData();
     bodyData.append("file", file);
@@ -156,11 +169,11 @@ function Form({ showUpload }) {
       if (!response.ok) {
         throw new Error("Server error");
       }
-     
+
       const data = await response.json();
 
       setCvResult(data.response);
-     
+
     } catch (error) {
       setError(error)
 
@@ -370,9 +383,9 @@ function Form({ showUpload }) {
         {/* RIGHT SIDE */}
         <div className="col-lg-8">
           <div className="card shadow-sm">
-            <div className="card-body cv-preview flex-column">
+            <div className="card-body cv-preview">
               {/* Header */}
-              <div className="d-flex justify-content-between mb-3">
+              <div className="d-flex justify-content-between  flex-column mb-3">
                 <h5 className="mb-0">CV Preview</h5>
                 <div className='mt-1'>
                   {cvResult != '' ? (
@@ -387,7 +400,7 @@ function Form({ showUpload }) {
                         value={cvResult}
                         readOnly
                       ></textarea>
-                     
+
 
                     </div>
                   )
@@ -397,23 +410,31 @@ function Form({ showUpload }) {
                 </div>
               </div>
               {/* Preview */}
-              <div className="border rounded p-3 bg-light">
-                <h4>Name</h4>
-                <p className="text-muted">
-                  Professional summary goes here...
-                </p>
 
-                <h6 className="mt-3">Experience</h6>
-                <ul>
-                  <li>Worked on frontend applications</li>
-                  <li>Improved performance by 30%</li>
-                </ul>
-                <h6 className="mt-3">Skills</h6>
-                <p>React, JavaScript, CSS</p>
-              </div>
+              {pdfUrl ? 
+                <iframe
+                  src={pdfUrl}
+                  width="100%"
+                  height="600px"
+                  style={{ border: "none" }}
+                />: (<div className="border rounded p-3 bg-light">
+                  <h4>Name</h4>
+                  <p className="text-muted">
+                    Professional summary goes here...
+                  </p>
+
+                  <h6 className="mt-3">Experience</h6>
+                  <ul>
+                    <li>Worked on frontend applications</li>
+                    <li>Improved performance by 30%</li>
+                  </ul>
+                  <h6 className="mt-3">Skills</h6>
+                  <p>React, JavaScript, CSS</p>
+                </div>)
+              }
               {/* Actions */}
               <div className="mt-3 d-flex gap-2">
-                <button className="btn btn-outline-secondary btn-sm">
+                <button className="btn btn-outline-secondary btn-sm" onClick={compileLatex}>
                   <i className='bi bi-download me-1'></i>
                   Download PDF
                 </button>
@@ -421,7 +442,7 @@ function Form({ showUpload }) {
                   <i className='bi bi-clipboard me-1'></i>
                   Copy LaTeX
                 </button>
-                <button className="btn btn-outline-secondary btn-sm">
+                <button className="btn btn-outline-secondary btn-sm" onClick={regenerateCV}>
                   <i className='bi bi-arrow-repeat me-1'></i>
                   Regenerate
                 </button>

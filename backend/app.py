@@ -5,6 +5,7 @@ from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langchain_openai import OpenAIEmbeddings
 from langchain_chroma import Chroma
 from langchain_openai import ChatOpenAI
+from flask import send_from_directory
 from langchain_classic.chains import RetrievalQA
 from langchain_core.prompts import PromptTemplate
 from flask import send_file
@@ -105,7 +106,6 @@ def generate_cv_rag(file_path, job_description, prompt):
     retriever = get_retriever(vectordb)
     chain = build_chain(retriever, prompt)
     
-    print(chain)
     result = chain.run(job_description)
     return result    
 
@@ -120,7 +120,6 @@ def generate_cv_from_file():
     file = request.files['file']
     job_description = request.form.get('job_description', '')
  
-    print("Received job description:", job_description)
     file_path = os.path.join("uploads", file.filename)
     os.makedirs("uploads", exist_ok=True)
 
@@ -163,6 +162,46 @@ def generate_cv_from_file():
         return jsonify({"response": latex})
     except Exception as e:
         return jsonify({"error": str(e)}), 500
+
+
+
+def compile_latex_to_pdf(latex_str, output_name="cv"):
+    os.makedirs("output", exist_ok=True)
+
+    tex_path = f"output/{output_name}.tex"
+    pdf_path = f"output/{output_name}.pdf"
+  
+    # write .tex file
+    with open(tex_path, "w", encoding="utf-8") as f:
+        f.write(latex_str)
+    print(os.environ["PATH"])
+    # compile LaTeX
+
+    subprocess.run(
+        ["pdflatex", "-output-directory=output", tex_path],
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE
+    )
+    print(pdf_path)
+    return pdf_path
+
+@app.route("/getLatexPreview", methods=["POST"])
+def getLatexPreview():
+    data = request.get_json()
+    latex = data.get("latex")
+
+    if not latex:
+        return jsonify({"error": "No latex provided"}), 400
+   
+    pdf_path = compile_latex_to_pdf(latex)
+
+    return jsonify({
+        "pdf_url": f"http://127.0.0.1:5000/{pdf_path}"
+    })
+
+@app.route("/output/<path:filename>")
+def serve_pdf(filename):
+    return send_from_directory("output", filename)
 
 if __name__ == '__main__':
     app.run(debug=True)
