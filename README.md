@@ -22,8 +22,8 @@ It outputs **clean LaTeX code** ready for compilation into a polished PDF resume
 * 🎯 Tailor CV based on job description
 * 📄 Output in LaTeX format
 * 📋 Copy-to-clipboard functionality
-* 📤 *(In progress)* Upload existing CV for data extraction
-* 📥 *(In progress)* Export CV as PDF
+* 📤 Upload existing CV for data extraction
+* 📥 Export CV as PDF
 
 ---
 
