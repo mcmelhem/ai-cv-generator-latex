@@ -15,7 +15,9 @@ import subprocess
 import os   
 load_dotenv()
 
+
 openai = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
+api_url = os.getenv("API_URL")
 app = Flask(__name__)
 CORS(app)
 
@@ -55,10 +57,8 @@ def generate_cv():
         )        
         ai_reponse = response.choices[0].message.content.strip()
         ai_reponse = ai_reponse.replace("```latex", "").replace("\\n", "\n").replace("\\\\", "\\")
-        with open("cv.tex", "w", encoding="utf-8") as f:
-            f.write(ai_reponse)    
-        subprocess.run(["pdflatex", "cv.tex"], check=True)    
-        return send_file("cv.pdf", as_attachment=True)
+      
+        return  jsonify({"response": ai_reponse})
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
@@ -70,8 +70,12 @@ def load_file(file_path):
         loader = Docx2txtLoader(file_path)
     else:
         raise ValueError("Unsupported file format")
-
-    documents = loader.load()
+    try:
+       documents = loader.load()
+    except Exception:
+        return jsonify({"error": "Failed to read file"}), 500
+    if not documents:
+        return jsonify({"error": "No content extracted"}), 500
     return documents
 
 def split_file(documents):
@@ -95,6 +99,7 @@ def build_chain(retriever, prompt):
     qa_chain = RetrievalQA.from_chain_type(
         llm=llm,
         retriever=retriever,
+        chain_type="stuff",
         chain_type_kwargs={"prompt": prompt}
     )
     return qa_chain
@@ -109,8 +114,6 @@ def generate_cv_rag(file_path, job_description, prompt):
     result = chain.run(job_description)
     return result    
 
-UPLOAD_FOLDER = 'uploads'
-os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
 @app.route('/generateCVFromFile', methods=['POST'])
 def generate_cv_from_file():
@@ -123,7 +126,10 @@ def generate_cv_from_file():
     file_path = os.path.join("uploads", file.filename)
     os.makedirs("uploads", exist_ok=True)
 
-    file.save(file_path)
+    try:
+        file.save(file_path)
+    except Exception:
+        return jsonify({"error": "Failed to save file"}), 500
     
     template = """
             You are a professional CV writer.
@@ -171,32 +177,57 @@ def compile_latex_to_pdf(latex_str, output_name="cv"):
     tex_path = f"output/{output_name}.tex"
     pdf_path = f"output/{output_name}.pdf"
   
-    # write .tex file
+ 
     with open(tex_path, "w", encoding="utf-8") as f:
         f.write(latex_str)
-    print(os.environ["PATH"])
-    # compile LaTeX
+  
 
-    subprocess.run(
+    result = subprocess.run(
         ["pdflatex", "-output-directory=output", tex_path],
         stdout=subprocess.PIPE,
         stderr=subprocess.PIPE
     )
-    print(pdf_path)
+    if result.returncode != 0:
+        error_message = result.stdout + "\n" + result.stderr
+
+        return {
+            "success": False,
+            "stage": "latex_compilation",
+            "error": "LaTeX compilation failed",
+            "details": error_message
+        }
     return pdf_path
 
+def escape_latex(text):
+    replacements = {
+        "&": r"\&",
+        "%": r"\%",
+        "$": r"\$",
+        "#": r"\#",
+        "_": r"\_",
+    }
+
+    for k, v in replacements.items():
+        text = text.replace(k, v)
+
+    return text
+
+UPLOAD_FOLDER = 'uploads'
+os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 @app.route("/getLatexPreview", methods=["POST"])
 def getLatexPreview():
     data = request.get_json()
     latex = data.get("latex")
-
+    latex = latex.replace("\\n", "\n")   
+    latex = latex.replace("\\\\", "\\")  
+    latex = latex.replace("\\[", "\\\\[") 
     if not latex:
         return jsonify({"error": "No latex provided"}), 400
-   
+    latex = escape_latex(latex)
     pdf_path = compile_latex_to_pdf(latex)
-
+    print(pdf_path)
     return jsonify({
-        "pdf_url": f"http://127.0.0.1:5000/{pdf_path}"
+        "pdf_url": f"{api_url}/{pdf_path}"
     })
 
 @app.route("/output/<path:filename>")
