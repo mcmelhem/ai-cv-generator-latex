@@ -61,7 +61,7 @@ ai-generator/
 ### 1️⃣ Clone the repository
 
 ```bash
-git clone https://github.com/YOUR_USERNAME/latexgen-ai.git
+git clone https://github.com/mcmelhem/latexgen-ai.git
 cd latexgen-ai
 ```
 
