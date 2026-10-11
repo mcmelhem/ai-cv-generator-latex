@@ -113,7 +113,7 @@ OPENAI_API_KEY=your_api_key_here
 
 ## 🔮 Future Improvements
 
-* 📄 Add Nore Form Fields such as Projects, Courses...
+* 📄 Add More Form Fields such as Projects, Courses...
 * 🖼️ Preview As Image
 * 🎨 Multiple CV templates
 * 🌐 Deployment (live demo)
