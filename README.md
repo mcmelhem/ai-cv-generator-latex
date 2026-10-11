@@ -1,6 +1,6 @@
 # 🚀 LaTeXGen AI
 
-Generate **professional, AI-powered LaTeX CVs** tailored to job descriptions in seconds.
+Generate **professional, AI-powered LaTeX CVs** tailored to job descriptions in seconds. This is built for people with no prior Latex knowledge but would like to have a well designed CV in pdf format.
 
 ---
 
@@ -128,17 +128,3 @@ Built by **Marieclaire Melhem**
 
 ---
 
-## ⭐ Why This Project
-
-This project demonstrates:
-
-* Full-stack development (React + Flask)
-* API integration
-* AI-powered applications and Rag implementation
-* Real-world product thinking
-
----
-
-## 📬 Contact
-
-Feel free to reach out or contribute!
