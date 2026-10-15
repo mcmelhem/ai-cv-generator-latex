@@ -1,16 +1,16 @@
 import { useRef, useState } from 'react'
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { ClipLoader } from "react-spinners";
-import { API_BASE_URL } from '../constants.js';
+import { API_BASE_URL } from '../constants.ts';
 import './Form.css'
-
+import formLogo from "../assets/form-img.png";
 
 function Form({ showUpload }: { showUpload: boolean }) {
-  const [jobDescription, setJobDescription] = useState('');
+  const [jobDescription, ] = useState('');
   const [cvResult, setCvResult] = useState('')
-  const [error, setError] = useState('')
+  const [, setError] = useState('')
   const [loading, setLoading] = useState(false);
-  const [isCopied, setIsCopied] = useState(false);
+  const [, setIsCopied] = useState(false);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const [fileName, setFileName] = useState("");
   const [pdfUrl, setPdfUrl] = useState("");
@@ -214,7 +214,7 @@ function Form({ showUpload }: { showUpload: boolean }) {
             (<div className="card shadow-sm mb-4">
               <div className="card-body d-flex flex-column">
                 <h5 className="card-title d-flex align-items-center gap-2  text-color">
-                  <img src=".\src\assets\form-img.png" className='img-form' alt="Icon" />
+                  <img src={formLogo} className='img-form' alt="Icon" />
                   Start from Scratch
                 </h5>
                 <p className="subtext text-color">
