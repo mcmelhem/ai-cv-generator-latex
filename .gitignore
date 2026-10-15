@@ -4,3 +4,9 @@ __pycache__/
 .env
 dist/
 *.log
+backend/output/cv.aux
+backend/output/cv.pdf
+backend/output/cv.tex
+backend/uploads/Marie_Claire_Melhem.pdf
+backend/cv.aux
+

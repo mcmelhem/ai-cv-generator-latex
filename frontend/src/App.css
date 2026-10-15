@@ -2,12 +2,9 @@
   max-width: 960px;
 }
 
-/*
- * Custom translucent site header
- */
 
-.site-header {
-  /*background-color: rgb(37 38 62 / 85%);*/
+/*.site-header {
+
   -webkit-backdrop-filter: saturate(180%) blur(20px);
   backdrop-filter: saturate(180%) blur(20px);
 }
@@ -27,9 +24,7 @@
   text-decoration: none;
 }
 
-/*
- * Dummy devices (replace them with your own or something else entirely!)
- */
+
 
 .product-device {
   position: absolute;
@@ -63,9 +58,6 @@
 }
 
 
-/*
- * Extra utilities
- */
 
 .border-top {
   border-top: 1px solid #e5e5e5;
@@ -111,10 +103,7 @@
 }
 
 .nav-headline {
-  background-image: url('./src/assets/background.png');
-  background-repeat: no-repeat;
-  background-attachment: fixed;
-  background-size: cover;
+  background: #F1EFF8;
   height: 100%;
   min-height: 100vh;
 }
@@ -122,9 +111,18 @@
 .headline-text {
   color: rgb(37 38 62 / 85%);
 }
-.more-info{
-  border: 1px solid rgba(37, 38, 62, 0.155);;;
+
+.more-info {
+  border: 1px solid rgba(37, 38, 62, 0.155);
   background-color: white;
   border-radius: 15px;
   padding: 8px;
+}*/
+.text-color {
+  color: #3B405F;
+}
+
+.img-logo {
+  width: 180px;
+  height: 35px;
 }
