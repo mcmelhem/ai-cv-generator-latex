@@ -1,13 +1,15 @@
 import { useState } from 'react';
-import './App.css'
-import Form from './components/Form'
+import './App.css';
 import 'bootstrap-icons/font/bootstrap-icons.css';
+import Form from './components/Form';
+import logo from "../src/assets/logo.png";
+
 function App() {
   const [showUpload, setShowUpload] = useState(false);
   return (
     <>
      <div className="m-1">
-        <img src=".\src\assets\logo.png" className='img-logo mt-2' alt="Logo"/>
+        <img src={logo} className='img-logo mt-2' alt="Logo"/>
      </div>
       <div className="container py-3">
       
