@@ -179,7 +179,7 @@ function Form({ showUpload }: { showUpload: boolean }) {
     try {
       setLoading(true);
       setCvResult("");
-      const response = await fetch("http://127.0.0.1:5000/generateCVFromFile", {
+      const response = await fetch(`${API_BASE_URL}/generateCVFromFile`, {
         method: "POST",
         body: bodyData,
       });
