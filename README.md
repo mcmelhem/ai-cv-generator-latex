@@ -38,11 +38,15 @@ It outputs **clean LaTeX code** ready for compilation into a polished PDF resume
 ### Backend
 
 * Flask (Python)
-
+* LangChain + Chroma (retrieval over uploaded CVs)
+* pdflatex (PDF compilation)
 ### AI
 
 * OpenAI API
 
+##DevOps
+* Docker & Docker Compose
+* Render (deployment)
 ---
 
 ## 📁 Project Structure
