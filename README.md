@@ -1,7 +1,7 @@
 # 🚀 LaTeXGen AI
 
 Generate **professional, AI-powered LaTeX CVs** tailored to job descriptions in seconds. This is built for people with no prior Latex knowledge but would like to have a well designed CV in pdf format.
-🌐 Live demo: ai-cv-generator-frontend.onrender.com
+🌐 Live demo: https://latex-cv-generator.onrender.com
 
 ---
 
